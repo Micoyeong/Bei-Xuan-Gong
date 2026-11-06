@@ -1,3 +1,5 @@
-# 北玄宫 3D V3.1 修复版
+北玄宫 V5.1 主殿建筑升级版
 
-修复 Three.js OrbitControls 在浏览器中无法解析 `three` 模块的问题。请将本目录的 `index.html` 上传到 GitHub 仓库根目录并覆盖旧文件，然后 Commit changes；Cloudflare Pages 会自动重新部署。
+基于 V3.1 原始主殿代码升级，保留首页、三尊神位、神坛、香炉、蒲团及互动按钮。主要调整天花板龙凤八卦浮雕、深色木质墙面、深色石材地板、两侧立柱和柔和金色照明。
+
+部署：将 index.html 上传到 GitHub 仓库根目录并覆盖同名文件，Commit changes，等待 Cloudflare Pages 自动部署。

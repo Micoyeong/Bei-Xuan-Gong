@@ -87,7 +87,7 @@ function build(){
  camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,100);camera.position.set(0,6.2,13.5);
  renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;
  controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,3,-4.1);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=5;controls.maxDistance=22;controls.maxPolarAngle=Math.PI*.48;controls.minPolarAngle=.25;
- const gold=mat('#c99b50',.72,.27),brightGold=mat('#edc878',.7,.22),darkWood=mat('#24160f',.28,.34),wood=mat('#49301d',.32,.32),black=mat('#171310',.35,.28),stone=mat('#4b4034',.25,.32),floorMat=mat('#55483c',.5,.22),warm=mat('#ffd18a',.1,.22);
+ const gold=mat('#c99b50',.72,.27),brightGold=mat('#edc878',.7,.22),darkWood=mat('#24160f',.28,.34),wood=mat('#49301d',.32,.32),black=mat('#171310',.35,.28),stone=mat('#4b4034',.25,.32),floorMat=mat('#211d1a',.72,.16),warm=mat('#ffd18a',.1,.22);
  scene.add(new THREE.HemisphereLight('#ffe9c6','#21160f',1.7));
  const key=new THREE.DirectionalLight('#ffe0ae',3.3);key.position.set(-5,12,8);key.castShadow=true;scene.add(key);
  const fill=new THREE.PointLight('#ffb95c',65,30);fill.position.set(0,7,-5);scene.add(fill);
@@ -95,21 +95,38 @@ function build(){
  function addBox(w,h,d,m,x,y,z){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;scene.add(o);return o}
  function addCyl(rt,rb,h,m,x,y,z,n=48){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,n),m);o.position.set(x,y,z);o.castShadow=true;scene.add(o);return o}
  function ring(radius,tube,m,x,y,z,rx=0){const o=new THREE.Mesh(new THREE.TorusGeometry(radius,tube,12,100),m);o.position.set(x,y,z);o.rotation.x=rx;scene.add(o);return o}
- // polished dark stone floor and central approach
- addBox(20,.3,25,floorMat,0,-.18,0);addBox(5,.025,17,mat('#9c8060',.45,.2),0,-.015,2);
- // tall rear wall, side walls, and architectural frames
+ // polished dark marble floor, subtle gold inlay; keep the central approach unobstructed
+ addBox(20,.3,25,floorMat,0,-.18,0);addBox(5,.025,17,mat('#65503a',.62,.18),0,-.015,2);
+ for(let x=-8;x<=8;x+=4){addBox(.025,.012,22,gold,x,-.018,0)}
+ for(let z=-9;z<=9;z+=4){addBox(19,.012,.025,gold,0,-.018,z)}
+ // tall dark timber rear and side walls with restrained champagne-gold framing
  addBox(20,11,.5,darkWood,0,5.3,-9.2);addBox(.5,11,19,darkWood,-9.8,5.3,0);addBox(.5,11,19,darkWood,9.8,5.3,0);
  addBox(18,.28,.35,gold,0,9.7,-8.82);addBox(18,.22,.28,gold,0,1,-8.82);
+ for(const side of [-1,1]){for(let z=-7;z<=7;z+=2){addBox(.10,7,.10,wood,side*9.48,4.8,z);addBox(.035,6.8,.08,brightGold,side*9.38,4.8,z)}}
  // vertical timber fins and illuminated wall panels
  for(let x=-8.8;x<=8.8;x+=.48){addBox(.075,6.7,.12,wood,x,5.2,-8.82)}
  for(const x of [-7.8,-5.9,5.9,7.8]){addBox(1.35,5.5,.18,black,x,5.1,-8.55);addBox(1.16,5.2,.035,stone,x,5.1,-8.43);addBox(.035,5.3,.07,brightGold,x-0.7,5.1,-8.35);addBox(.035,5.3,.07,brightGold,x+0.7,5.1,-8.35)}
- // ceiling coffer grid and concentric illuminated ceremonial ceiling feature
+ // layered dark timber coffer ceiling and a ceremonial dragon-phoenix Bagua medallion
  addBox(20,.45,20,darkWood,0,10.7,0);
  for(let x=-9;x<=9;x+=3){addBox(.22,.32,19,wood,x,10.43,0)}for(let z=-8;z<=8;z+=3){addBox(19,.32,.22,wood,0,10.43,z)}
  const ceilingDisk=new THREE.Mesh(new THREE.CylinderGeometry(5.2,5.2,.16,96),black);ceilingDisk.position.set(0,10.25,-1.5);scene.add(ceilingDisk);
  const ceilingRing=ring(5.1,.13,brightGold,0,10.15,-1.5,Math.PI/2);const ceilingRing2=ring(4.55,.055,gold,0,10.13,-1.5,Math.PI/2);
- // subtle ceiling medallion pattern, radial spokes
- for(let i=0;i<24;i++){const a=i*Math.PI/12;const o=addBox(.035,.025,4.25,gold,Math.cos(a)*2.45,10.15,-1.5+Math.sin(a)*2.45);o.rotation.y=-a}
+ // central Tai Chi and eight trigrams, mounted flat to the underside of the ceiling
+ const baguaBase=new THREE.Mesh(new THREE.CircleGeometry(2.15,96),new THREE.MeshBasicMaterial({color:'#33251a',side:THREE.DoubleSide}));baguaBase.rotation.x=-Math.PI/2;baguaBase.position.set(0,10.145,-1.5);scene.add(baguaBase);
+ const baguaRim=ring(2.18,.075,brightGold,0,10.12,-1.5,Math.PI/2);ring(1.95,.025,gold,0,10.105,-1.5,Math.PI/2);
+ const yinYang=new THREE.Mesh(new THREE.CircleGeometry(.78,64),new THREE.MeshBasicMaterial({color:'#d9bb82',side:THREE.DoubleSide}));yinYang.rotation.x=-Math.PI/2;yinYang.position.set(0,10.09,-1.5);scene.add(yinYang);
+ const yinDark=new THREE.Mesh(new THREE.CircleGeometry(.38,48),new THREE.MeshBasicMaterial({color:'#171310',side:THREE.DoubleSide}));yinDark.rotation.x=-Math.PI/2;yinDark.position.set(0,10.075,-1.5);scene.add(yinDark);
+ for(let i=0;i<8;i++){const a=i*Math.PI/4;for(let j=0;j<3;j++){const broken=(i+j)%2===1;const r=1.48+j*.17;const px=Math.sin(a)*r,pz=-1.5+Math.cos(a)*r;const bar1=addBox(broken?.19:.48,.045,.075,brightGold,px,10.08,pz);bar1.rotation.y=a;if(broken){const bar2=addBox(.19,.045,.075,brightGold,px+Math.cos(a)*.27,10.08,pz-Math.sin(a)*.27);bar2.rotation.y=a}}}
+ // sculptural flowing dragon and phoenix silhouettes in raised gold relief, left and right of Bagua
+ function ceilingCreature(points,tube){const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(p[0],10.075,p[1])));const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,120,tube,10,false),brightGold);scene.add(mesh)}
+ const dragonPts=[],phoenixPts=[];for(let i=0;i<=42;i++){const t=i/42*Math.PI*2;dragonPts.push([-2.9+Math.cos(t)*1.55,-1.5+Math.sin(t)*1.15]);phoenixPts.push([2.9+Math.cos(t)*1.55,-1.5+Math.sin(t)*1.15])}ceilingCreature(dragonPts,.105);ceilingCreature(phoenixPts,.105);
+ // flowing tails and feather/flame accents
+ ceilingCreature([[-4.1,-1.5],[-4.8,-.9],[-4.45,-.2],[-3.8,.15],[-3.3,.35]],.075);
+ ceilingCreature([[4.1,-1.5],[4.8,-.9],[4.45,-.2],[3.8,.15],[3.3,.35]],.075);
+ // four side columns only; keep the central sightline and all three deity positions clear
+ for(const x of [-8.15,8.15]){for(const z of [-5.2,3.2]){addCyl(.19,.25,8.7,wood,x,4.35,z);addCyl(.31,.31,.22,gold,x,.16,z);addCyl(.29,.29,.20,brightGold,x,8.72,z);ring(.205,.045,gold,x,1.0,z);ring(.205,.045,gold,x,7.9,z)}}
+ // soft cove lighting around the ceiling medallion
+ for(let i=0;i<16;i++){const a=i*Math.PI/8;const glow=new THREE.PointLight('#ffd18a',2.2,3);glow.position.set(Math.cos(a)*4.65,9.95,-1.5+Math.sin(a)*4.65);scene.add(glow)}
  // altar backdrop: luminous circular halo, layered mountain-like relief panels
  addBox(10.8,7.3,.35,black,0,5.2,-8.45);addBox(9.9,6.5,.18,stone,0,5.25,-8.22);
  const halo=new THREE.Mesh(new THREE.CircleGeometry(3.25,96),new THREE.MeshBasicMaterial({color:'#6c4828'}));halo.position.set(0,5.1,-8.08);scene.add(halo);
