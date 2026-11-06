@@ -1,17 +1,17 @@
-# 北玄宫 BEI XUAN GONG — 第一版网站
+# 北玄宫 BEI XUAN GONG — 3D 主殿 V3
 
-这是一个纯静态 HTML 网站，不需要安装 Node.js，也不需要 Build command。
+本版本以用户确认的北玄宫主殿参考图为设计蓝本，使用 Three.js 建立独立的3D空间，而不是将参考图作为背景。
 
-## 上传到 GitHub
-1. 打开你的 `Micoyeong/Bei-Xuan-Gong` repository。
-2. 点击 **Add file** → **Upload files**。
-3. 解压此 ZIP，把里面的 `index.html` 上传到 repository 根目录。
-4. 在页面底部点击 **Commit changes**。
+## 更新部署
+1. 解压 ZIP。
+2. 在 GitHub 的 Bei-Xuan-Gong 仓库根目录上传并覆盖 `index.html`。
+3. Commit changes。Cloudflare Pages 会自动重新部署。
 
-## Cloudflare Pages 部署设置
-- Framework preset: None / Other
-- Build command: 留空
-- Build output directory: `/` 或 `.`（如果界面要求填写，优先使用 `/`；若不接受则使用 `.`）
-- Root directory: `/`（repository 根目录）
+## 本版内容
+- 对称式深木色、金色现代东方主殿空间
+- 圆形主神背景、环形天花装饰、三座神坛
+- 神位：左法主公、中央太子（主神）、右玄天上帝
+- 供桌、香炉、蒲团、两侧灯饰
+- 鼠标/触控旋转视角与缩放；上香、合掌、点灯互动
 
-注意：当前版本是官方网站展示页；3D 自由走动、人物 Avatar、上香与跪拜动画尚未开发。
+注意：神像目前为3D比例占位模型，后续可按确认的神像参考造型替换为正式模型。本版尚未实现第一人称行走、多人联机或真实祈福资料保存。
