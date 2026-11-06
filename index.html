@@ -112,34 +112,34 @@ function build(){
  for(let i=0;i<24;i++){const a=i*Math.PI/12;const o=addBox(.035,.025,4.25,gold,Math.cos(a)*2.45,10.15,-1.5+Math.sin(a)*2.45);o.rotation.y=-a}
 
  // V6 ceiling centerpiece: Bagua medallion, visible dragon on the left and phoenix on the right.
- const ceilingGold=brightGold;
+ const ceilingGold=new THREE.MeshStandardMaterial({color:0xffd36b,metalness:.72,roughness:.22,emissive:0x9b4b08,emissiveIntensity:1.25});
  function ceilingTube(points,r=.075,material=ceilingGold){
-   const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(p[0],10.045,p[1])));
-   const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,96,r,10,false),material);
+   const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(p[0],10.115,p[1])));
+   const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,120,r*1.75,12,false),material);
    mesh.castShadow=true;scene.add(mesh);return mesh;
  }
  function ceilingOval(x,z,sx,sz,material=ceilingGold){
    const m=new THREE.Mesh(new THREE.SphereGeometry(1,20,14),material);
-   m.position.set(x,10.04,z);m.scale.set(sx,.065,sz);scene.add(m);return m;
+   m.position.set(x,10.115,z);m.scale.set(sx*1.22,.095,sz*1.22);scene.add(m);return m;
  }
  // eight trigrams around the yin-yang disk; alternating solid and broken bars
- const baguaDisk=new THREE.Mesh(new THREE.CylinderGeometry(1.55,1.55,.07,64),gold);
- baguaDisk.position.set(0,10.04,-1.5);scene.add(baguaDisk);
- const yinDisk=new THREE.Mesh(new THREE.CylinderGeometry(1.34,1.34,.06,64),black);
- yinDisk.position.set(0,10.085,-1.5);scene.add(yinDisk);
+ const baguaDisk=new THREE.Mesh(new THREE.CylinderGeometry(2.05,2.05,.09,64),gold);
+ baguaDisk.position.set(0,10.115,-1.5);scene.add(baguaDisk);
+ const yinDisk=new THREE.Mesh(new THREE.CylinderGeometry(1.78,1.78,.07,64),black);
+ yinDisk.position.set(0,10.17,-1.5);scene.add(yinDisk);
  const yinYang=new THREE.Mesh(new THREE.TorusGeometry(.56,.045,12,64),brightGold);
- yinYang.position.set(0,10.13,-1.5);scene.add(yinYang);
+ yinYang.position.set(0,10.20,-1.5);scene.add(yinYang);
  // Tai-chi two contrasting lobes
  const lobeA=new THREE.Mesh(new THREE.SphereGeometry(.42,24,16),brightGold);
- lobeA.scale.set(1,.09,1);lobeA.position.set(0,10.13,-1.78);scene.add(lobeA);
+ lobeA.scale.set(1,.09,1);lobeA.position.set(0,10.20,-1.88);scene.add(lobeA);
  const lobeB=new THREE.Mesh(new THREE.SphereGeometry(.42,24,16),black);
- lobeB.scale.set(1,.09,1);lobeB.position.set(0,10.13,-1.22);scene.add(lobeB);
+ lobeB.scale.set(1,.09,1);lobeB.position.set(0,10.20,-1.12);scene.add(lobeB);
  for(let i=0;i<8;i++){
-   const a=i*Math.PI/4, cx=Math.cos(a)*2.55, cz=-1.5+Math.sin(a)*2.55;
+   const a=i*Math.PI/4, cx=Math.cos(a)*3.05, cz=-1.5+Math.sin(a)*3.05;
    for(let j=0;j<3;j++){
      const z=cz+(j-1)*.18;
-     if((i+j)%2===0) addBox(.58,.045,.075,brightGold,cx,10.08,z);
-     else {addBox(.24,.045,.075,brightGold,cx-.17,10.08,z);addBox(.24,.045,.075,brightGold,cx+.17,10.08,z);}
+     if((i+j)%2===0) addBox(.82,.075,.12,ceilingGold,cx,10.16,z);
+     else {addBox(.34,.075,.12,ceilingGold,cx-.25,10.16,z);addBox(.34,.075,.12,ceilingGold,cx+.25,10.16,z);}
    }
  }
  // Dragon relief on left: head, horns, whiskers, winding body and four legs/claws.
@@ -173,6 +173,22 @@ function build(){
    ceilingTube([[3.3,-.95],[2.75+k*.12,-1.75-k*.1],[2.4+k*.35,-2.8-k*.12]],.05);
    ceilingOval(2.4+k*.35,-2.82-k*.12,.09,.16);
  }
+
+ // Strong luminous silhouette accents: dragon scales, mane and phoenix feather tips.
+ for(let i=0;i<15;i++){
+   const t=i/14;
+   const x=-2.65-1.35*Math.sin(t*Math.PI);
+   const z=-3.45+t*3.7;
+   ceilingOval(x,z,.105,.14,ceilingGold);
+ }
+ for(let i=0;i<9;i++){
+   const a=-.95+i*.24;
+   ceilingTube([[3.1,-.45],[3.1+Math.cos(a)*.8,-1.05+Math.sin(a)*.7],[3.1+Math.cos(a)*1.25,-1.7+Math.sin(a)*.9]],.07,ceilingGold);
+ }
+ // Make the central Bagua ring stand out from the ceiling at normal viewing distance.
+ ring(2.2,.105,ceilingGold,0,10.105,-1.5,Math.PI/2);
+ ring(3.45,.075,ceilingGold,0,10.105,-1.5,Math.PI/2);
+
  // Additional warm ceiling coves and dark timber border detail.
  const cove1=ring(5.35,.045,brightGold,0,10.08,-1.5,Math.PI/2);
  const cove2=ring(5.55,.025,gold,0,10.06,-1.5,Math.PI/2);
