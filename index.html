@@ -117,12 +117,66 @@ function build(){
  const yinYang=new THREE.Mesh(new THREE.CircleGeometry(.78,64),new THREE.MeshBasicMaterial({color:'#d9bb82',side:THREE.DoubleSide}));yinYang.rotation.x=-Math.PI/2;yinYang.position.set(0,10.09,-1.5);scene.add(yinYang);
  const yinDark=new THREE.Mesh(new THREE.CircleGeometry(.38,48),new THREE.MeshBasicMaterial({color:'#171310',side:THREE.DoubleSide}));yinDark.rotation.x=-Math.PI/2;yinDark.position.set(0,10.075,-1.5);scene.add(yinDark);
  for(let i=0;i<8;i++){const a=i*Math.PI/4;for(let j=0;j<3;j++){const broken=(i+j)%2===1;const r=1.48+j*.17;const px=Math.sin(a)*r,pz=-1.5+Math.cos(a)*r;const bar1=addBox(broken?.19:.48,.045,.075,brightGold,px,10.08,pz);bar1.rotation.y=a;if(broken){const bar2=addBox(.19,.045,.075,brightGold,px+Math.cos(a)*.27,10.08,pz-Math.sin(a)*.27);bar2.rotation.y=a}}}
- // sculptural flowing dragon and phoenix silhouettes in raised gold relief, left and right of Bagua
- function ceilingCreature(points,tube){const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(p[0],10.075,p[1])));const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,120,tube,10,false),brightGold);scene.add(mesh)}
- const dragonPts=[],phoenixPts=[];for(let i=0;i<=42;i++){const t=i/42*Math.PI*2;dragonPts.push([-2.9+Math.cos(t)*1.55,-1.5+Math.sin(t)*1.15]);phoenixPts.push([2.9+Math.cos(t)*1.55,-1.5+Math.sin(t)*1.15])}ceilingCreature(dragonPts,.105);ceilingCreature(phoenixPts,.105);
- // flowing tails and feather/flame accents
- ceilingCreature([[-4.1,-1.5],[-4.8,-.9],[-4.45,-.2],[-3.8,.15],[-3.3,.35]],.075);
- ceilingCreature([[4.1,-1.5],[4.8,-.9],[4.45,-.2],[3.8,.15],[3.3,.35]],.075);
+ // clearly recognizable raised dragon (left) and phoenix (right) reliefs around the Bagua
+ // All ornaments lie on the underside of the ceiling and are viewed from below.
+ const reliefY=10.035;
+ function reliefLine(points,tube=.07,material=brightGold){
+   const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(p[0],reliefY,p[1])));
+   const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,100,tube,10,false),material);
+   mesh.castShadow=true;scene.add(mesh);return mesh;
+ }
+ function reliefBall(x,z,sx,sz,material=brightGold){
+   const m=new THREE.Mesh(new THREE.SphereGeometry(1,20,14),material);
+   m.position.set(x,reliefY,z);m.scale.set(sx,.075,sz);scene.add(m);return m;
+ }
+ // GOLD DRAGON: long S-shaped body, distinct head, horns, whiskers, legs and claws.
+ reliefLine([[-2.35,-3.0],[-2.85,-3.65],[-3.75,-3.55],[-4.15,-2.95],[-3.75,-2.35],[-2.95,-2.25],[-2.45,-1.75],[-2.65,-.95],[-3.45,-.55],[-4.15,-.05],[-4.35,.65],[-3.95,1.15]],.15);
+ reliefLine([[-2.45,-1.75],[-3.25,-1.45],[-3.9,-1.65],[-4.35,-2.1]],.085);
+ reliefLine([[-3.45,-.55],[-3.1,.05],[-3.35,.65],[-3.85,1.0]],.085);
+ // dragon head faces toward the central Bagua
+ reliefBall(-3.85,1.12,.43,.34);
+ reliefBall(-3.48,1.02,.25,.19);
+ reliefBall(-4.02,1.28,.10,.09,black);
+ reliefBall(-3.73,1.28,.10,.09,black);
+ reliefLine([[-4.05,1.35],[-4.35,1.65],[-4.48,1.9]],.055);
+ reliefLine([[-3.78,1.38],[-3.72,1.72],[-3.55,1.92]],.055);
+ reliefLine([[-3.55,.98],[-3.25,.82],[-3.05,.9]],.035);
+ reliefLine([[-4.15,.98],[-4.45,.78],[-4.62,.82]],.035);
+ // four small legs and three-pronged claws
+ for(const leg of [[-3.0,-2.55],[-3.85,-2.9],[-3.05,-.95],[-4.0,-.35]]){
+   const [x,z]=leg;reliefLine([[x,z],[x-.28,z-.28],[x-.42,z-.52]],.075);
+   reliefLine([[x-.42,z-.52],[x-.62,z-.58]],.035);
+   reliefLine([[x-.42,z-.52],[x-.42,z-.72]],.035);
+   reliefLine([[x-.42,z-.52],[x-.25,z-.68]],.035);
+ }
+ // flame-like mane and tail tips make the dragon silhouette readable from the floor
+ reliefLine([[-2.45,-3.0],[-1.95,-3.35],[-2.1,-3.72],[-2.55,-3.9]],.075);
+ reliefLine([[-2.55,-2.95],[-2.15,-2.72],[-2.05,-2.42]],.055);
+
+ // GOLD PHOENIX: head and curved neck, oval body, spread wings and unmistakable fan tail.
+ reliefBall(3.65,1.18,.32,.26);
+ reliefLine([[3.55,1.12],[3.28,.82],[3.15,.35],[3.35,-.1]],.105);
+ reliefLine([[3.65,1.2],[3.95,1.28],[4.18,1.18]],.06); // beak
+ reliefLine([[3.55,1.38],[3.42,1.72],[3.55,1.95]],.055);
+ reliefLine([[3.75,1.38],[3.88,1.7],[4.12,1.85]],.055);
+ reliefBall(3.38,1.25,.07,.07,black);
+ // body and two sweeping wings
+ reliefBall(3.15,-.45,.48,.82);
+ reliefLine([[3.05,-.2],[2.55,.25],[2.15,.85],[2.05,1.35]],.12);
+ reliefLine([[3.28,-.15],[3.85,.2],[4.35,.75],[4.5,1.28]],.12);
+ // layered feather lines on both wings
+ for(let k=0;k<4;k++){
+   reliefLine([[2.85-k*.12,-.05-k*.08],[2.45-k*.18,.45+k*.08],[2.25-k*.18,.95+k*.10]],.045);
+   reliefLine([[3.45+k*.10,-.02-k*.08],[3.95+k*.14,.42+k*.08],[4.28+k*.12,.95+k*.10]],.045);
+ }
+ // long flowing tail feathers fan toward the rear of the ceiling
+ for(let k=0;k<7;k++){
+   const x=2.65+k*.22;
+   reliefLine([[3.12,-.95],[x,-1.75-k*.10],[2.65+k*.38,-2.75-k*.12]],.055);
+   reliefBall(2.65+k*.38,-2.78-k*.12,.11,.18);
+ }
+ reliefLine([[2.95,-.8],[2.35,-1.65],[1.95,-2.45]],.07);
+ reliefLine([[3.35,-.8],[3.95,-1.65],[4.45,-2.4]],.07);
  // four side columns only; keep the central sightline and all three deity positions clear
  for(const x of [-8.15,8.15]){for(const z of [-5.2,3.2]){addCyl(.19,.25,8.7,wood,x,4.35,z);addCyl(.31,.31,.22,gold,x,.16,z);addCyl(.29,.29,.20,brightGold,x,8.72,z);ring(.205,.045,gold,x,1.0,z);ring(.205,.045,gold,x,7.9,z)}}
  // soft cove lighting around the ceiling medallion
