@@ -85,7 +85,7 @@ function makeDeity(x,label,main=false){
 function build(){
  scene=new THREE.Scene();scene.background=new THREE.Color('#120d09');scene.fog=new THREE.Fog('#120d09',19,42);
  camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,100);camera.position.set(0,6.2,13.5);
- renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;renderer.outputColorSpace=THREE.SRGBColorSpace;
+ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;
  controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,3,-4.1);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=5;controls.maxDistance=22;controls.maxPolarAngle=Math.PI*.48;controls.minPolarAngle=.25;
  const gold=mat('#c99b50',.72,.27),brightGold=mat('#edc878',.7,.22),darkWood=mat('#24160f',.28,.34),wood=mat('#49301d',.32,.32),black=mat('#171310',.35,.28),stone=mat('#4b4034',.25,.32),floorMat=mat('#55483c',.5,.22),warm=mat('#ffd18a',.1,.22);
  scene.add(new THREE.HemisphereLight('#ffe9c6','#21160f',1.7));
@@ -107,104 +107,21 @@ function build(){
  addBox(20,.45,20,darkWood,0,10.7,0);
  for(let x=-9;x<=9;x+=3){addBox(.22,.32,19,wood,x,10.43,0)}for(let z=-8;z<=8;z+=3){addBox(19,.32,.22,wood,0,10.43,z)}
  const ceilingDisk=new THREE.Mesh(new THREE.CylinderGeometry(5.2,5.2,.16,96),black);ceilingDisk.position.set(0,10.25,-1.5);scene.add(ceilingDisk);
+  // Approved reference artwork applied as a real ceiling texture inside the 3D scene.
+  const ceilingTexture=new THREE.TextureLoader().load('./ceiling-dragon-bagua.png');
+  ceilingTexture.colorSpace=THREE.SRGBColorSpace;
+  ceilingTexture.anisotropy=renderer.capabilities.getMaxAnisotropy();
+  const ceilingArtwork=new THREE.Mesh(new THREE.CircleGeometry(5.08,128),new THREE.MeshBasicMaterial({map:ceilingTexture,side:THREE.DoubleSide}));
+  ceilingArtwork.rotation.x=-Math.PI/2;
+  ceilingArtwork.position.set(0,10.345,-1.5);
+  scene.add(ceilingArtwork);
  const ceilingRing=ring(5.1,.13,brightGold,0,10.15,-1.5,Math.PI/2);const ceilingRing2=ring(4.55,.055,gold,0,10.13,-1.5,Math.PI/2);
  // subtle ceiling medallion pattern, radial spokes
- for(let i=0;i<24;i++){const a=i*Math.PI/12;const o=addBox(.035,.025,4.25,gold,Math.cos(a)*2.45,10.15,-1.5+Math.sin(a)*2.45);o.rotation.y=-a}
-
- // V6 ceiling centerpiece: Bagua medallion, visible dragon on the left and phoenix on the right.
- const ceilingGold=new THREE.MeshStandardMaterial({color:0xffd36b,metalness:.72,roughness:.22,emissive:0x9b4b08,emissiveIntensity:1.25});
- function ceilingTube(points,r=.075,material=ceilingGold){
-   const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(p[0],10.115,p[1])));
-   const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,120,r*1.75,12,false),material);
-   mesh.castShadow=true;scene.add(mesh);return mesh;
- }
- function ceilingOval(x,z,sx,sz,material=ceilingGold){
-   const m=new THREE.Mesh(new THREE.SphereGeometry(1,20,14),material);
-   m.position.set(x,10.115,z);m.scale.set(sx*1.22,.095,sz*1.22);scene.add(m);return m;
- }
- // eight trigrams around the yin-yang disk; alternating solid and broken bars
- const baguaDisk=new THREE.Mesh(new THREE.CylinderGeometry(2.05,2.05,.09,64),gold);
- baguaDisk.position.set(0,10.115,-1.5);scene.add(baguaDisk);
- const yinDisk=new THREE.Mesh(new THREE.CylinderGeometry(1.78,1.78,.07,64),black);
- yinDisk.position.set(0,10.17,-1.5);scene.add(yinDisk);
- const yinYang=new THREE.Mesh(new THREE.TorusGeometry(.56,.045,12,64),brightGold);
- yinYang.position.set(0,10.20,-1.5);scene.add(yinYang);
- // Tai-chi two contrasting lobes
- const lobeA=new THREE.Mesh(new THREE.SphereGeometry(.42,24,16),brightGold);
- lobeA.scale.set(1,.09,1);lobeA.position.set(0,10.20,-1.88);scene.add(lobeA);
- const lobeB=new THREE.Mesh(new THREE.SphereGeometry(.42,24,16),black);
- lobeB.scale.set(1,.09,1);lobeB.position.set(0,10.20,-1.12);scene.add(lobeB);
- for(let i=0;i<8;i++){
-   const a=i*Math.PI/4, cx=Math.cos(a)*3.05, cz=-1.5+Math.sin(a)*3.05;
-   for(let j=0;j<3;j++){
-     const z=cz+(j-1)*.18;
-     if((i+j)%2===0) addBox(.82,.075,.12,ceilingGold,cx,10.16,z);
-     else {addBox(.34,.075,.12,ceilingGold,cx-.25,10.16,z);addBox(.34,.075,.12,ceilingGold,cx+.25,10.16,z);}
-   }
- }
- // Dragon relief on left: head, horns, whiskers, winding body and four legs/claws.
- ceilingTube([[-1.9,-3.7],[-2.8,-4.2],[-4.0,-3.9],[-4.45,-3.1],[-4.0,-2.4],[-3.0,-2.25],[-2.35,-1.7],[-2.55,-.8],[-3.4,-.35],[-4.2,.25],[-4.15,1.0]],.15);
- ceilingOval(-4.18,1.0,.38,.30);
- ceilingTube([[-4.25,1.18],[-4.52,1.48],[-4.48,1.78]],.055);
- ceilingTube([[-4.02,1.22],[-3.92,1.55],[-3.72,1.76]],.055);
- ceilingTube([[-4.0,.98],[-3.65,.82],[-3.4,.88]],.045);
- ceilingTube([[-4.42,.95],[-4.7,.76],[-4.85,.8]],.045);
- ceilingOval(-4.31,1.08,.06,.06,black);ceilingOval(-4.05,1.08,.06,.06,black);
- for(const [x,z] of [[-3.0,-2.45],[-3.85,-2.9],[-3.0,-.95],[-3.9,-.45]]){
-   ceilingTube([[x,z],[x-.25,z-.27],[x-.4,z-.5]],.065);
-   ceilingTube([[x-.4,z-.5],[x-.58,z-.58]],.03);
-   ceilingTube([[x-.4,z-.5],[x-.4,z-.69]],.03);
-   ceilingTube([[x-.4,z-.5],[x-.22,z-.65]],.03);
- }
- ceilingTube([[-2.15,-3.65],[-1.75,-3.95],[-1.95,-4.35],[-2.4,-4.42]],.07);
- // Phoenix relief on right: head, beak, arched neck, wings and fan-shaped tail feathers.
- ceilingOval(4.05,1.0,.29,.24);
- ceilingTube([[4.1,1.0],[4.38,1.06],[4.58,.98]],.055);
- ceilingTube([[3.98,1.2],[3.84,1.52],[3.98,1.78]],.05);
- ceilingTube([[4.18,1.18],[4.42,1.46],[4.68,1.55]],.05);
- ceilingOval(3.35,-.35,.48,.78);
- ceilingTube([[3.35,-.25],[2.75,.25],[2.35,.9],[2.2,1.42]],.12);
- ceilingTube([[3.5,-.25],[4.05,.18],[4.5,.78],[4.62,1.32]],.12);
- for(let k=0;k<4;k++){
-   ceilingTube([[3.0-k*.1,-.1-k*.08],[2.55-k*.14,.45+k*.08],[2.32-k*.13,1.0+k*.08]],.04);
-   ceilingTube([[3.62+k*.08,-.1-k*.08],[4.05+k*.1,.4+k*.08],[4.38+k*.08,.95+k*.08]],.04);
- }
- for(let k=0;k<7;k++){
-   ceilingTube([[3.3,-.95],[2.75+k*.12,-1.75-k*.1],[2.4+k*.35,-2.8-k*.12]],.05);
-   ceilingOval(2.4+k*.35,-2.82-k*.12,.09,.16);
- }
-
- // Strong luminous silhouette accents: dragon scales, mane and phoenix feather tips.
- for(let i=0;i<15;i++){
-   const t=i/14;
-   const x=-2.65-1.35*Math.sin(t*Math.PI);
-   const z=-3.45+t*3.7;
-   ceilingOval(x,z,.105,.14,ceilingGold);
- }
- for(let i=0;i<9;i++){
-   const a=-.95+i*.24;
-   ceilingTube([[3.1,-.45],[3.1+Math.cos(a)*.8,-1.05+Math.sin(a)*.7],[3.1+Math.cos(a)*1.25,-1.7+Math.sin(a)*.9]],.07,ceilingGold);
- }
- // Make the central Bagua ring stand out from the ceiling at normal viewing distance.
- ring(2.2,.105,ceilingGold,0,10.105,-1.5,Math.PI/2);
- ring(3.45,.075,ceilingGold,0,10.105,-1.5,Math.PI/2);
-
- // Additional warm ceiling coves and dark timber border detail.
- const cove1=ring(5.35,.045,brightGold,0,10.08,-1.5,Math.PI/2);
- const cove2=ring(5.55,.025,gold,0,10.06,-1.5,Math.PI/2);
+ // The reference ceiling artwork supplies the dragon, phoenix and Bagua details.
  // altar backdrop: luminous circular halo, layered mountain-like relief panels
  addBox(10.8,7.3,.35,black,0,5.2,-8.45);addBox(9.9,6.5,.18,stone,0,5.25,-8.22);
  const halo=new THREE.Mesh(new THREE.CircleGeometry(3.25,96),new THREE.MeshBasicMaterial({color:'#6c4828'}));halo.position.set(0,5.1,-8.08);scene.add(halo);
  ring(3.35,.11,brightGold,0,5.1,-8.0);ring(3.08,.035,gold,0,5.1,-7.98);
-
- // Layered illuminated halo and restrained mountain-cloud relief panels behind the central deity.
- const haloGlow=new THREE.PointLight('#ffc979',42,10);haloGlow.position.set(0,5.2,-7.2);scene.add(haloGlow);
- for(const side of [-1,1]){
-   addBox(2.0,4.9,.09,wood,side*4.25,5.2,-8.02);
-   addBox(1.82,4.65,.045,stone,side*4.25,5.2,-7.95);
-   addBox(.055,4.75,.06,brightGold,side*5.2,5.2,-7.88);
-   addBox(.055,4.75,.06,brightGold,side*3.3,5.2,-7.88);
- }
  // altar steps, continuous main dais, then three separate raised plinths
  addBox(10.5,.42,1.65,black,0,.48,-6.65);addBox(10.2,.13,1.7,gold,0,.73,-6.65);addBox(9.8,.32,1.4,darkWood,0,.94,-6.65);
  function deity(x,name,main){const w=main?2.7:2.15;addBox(w,.34,1.35,black,x,1.35,-6.0);addBox(w+.12,.1,1.4,gold,x,1.57,-6.0);addBox(w-.22,.3,1.15,wood,x,1.77,-6.0);
@@ -223,7 +140,7 @@ function build(){
  addBox(5.4,1.05,.22,black,0,9.0,-8.05);addBox(5.5,.07,.28,gold,0,9.56,-8.0);addBox(5.5,.07,.28,gold,0,8.45,-8.0);
  const titleCanvas=document.createElement('canvas');titleCanvas.width=1024;titleCanvas.height=256;const tc=titleCanvas.getContext('2d');tc.fillStyle='#efc477';tc.textAlign='center';tc.font='bold 112px serif';tc.fillText('北 玄 宫',512,132);tc.font='34px sans-serif';tc.letterSpacing='8px';tc.fillText('BEI XUAN GONG',512,202);const titleTex=new THREE.CanvasTexture(titleCanvas);const titleMesh=new THREE.Mesh(new THREE.PlaneGeometry(5.1,.95),new THREE.MeshBasicMaterial({map:titleTex,transparent:true}));titleMesh.position.set(0,9.0,-7.91);scene.add(titleMesh);
  // offering table, incense burner and three kneeling cushions
- addBox(8.2,.42,1.35,darkWood,0,1.12,-3.55);addBox(8.35,.10,1.42,gold,0,1.38,-3.55);addBox(7.8,.18,1.28,wood,0,1.52,-3.55);
+ addBox(7,.28,1.2,darkWood,0,1.15,-3.45);addBox(7.1,.09,1.25,gold,0,1.34,-3.45);
  addCyl(.48,.58,.52,gold,0,1.75,-2.95,16);addCyl(.39,.45,.24,black,0,2.12,-2.95,16);addCyl(.13,.17,.38,gold,0,2.42,-2.95,12);
  const cushionMat=mat('#6e4a2c',.08,.8);for(const x of [-2.35,0,2.35]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.72,.78,.2,48),cushionMat);c.position.set(x,.02,1.2);scene.add(c)}
  // decorative side lanterns and flowering branches
