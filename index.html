@@ -51,8 +51,15 @@ footer{padding:28px 7vw;border-top:1px solid #ffffff1c;color:#a99d8c;font-size:1
     <button data-action="incense">上香</button><button data-action="bow">合掌参拜</button><button data-action="lamp">点亮供灯</button><button data-action="intro">神明介绍</button>
   </div>
 </div>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import * as THREE from 'three';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 document.getElementById('year').textContent=new Date().getFullYear();
 const temple=document.getElementById('temple'), canvas=document.getElementById('view'), loading=document.getElementById('loading'), message=document.getElementById('message');
